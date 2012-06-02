@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+  <meta name="viewport" content="initial-scale = 1.0, user-scalable = no" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Church App</title>
+  <script src="node_modules/poor-module.js"></script> 
+  <script src="node_modules/zepto.min.js"></script> 
+  <script src="node_modules/underscore/underscore-min.js"></script> 
+  <script>setModule("underscore", function () { return _ })</script> 
+  <script>setModule("zepto", function () { return $ })</script> 
+  <script src="node_modules/red-yarn/rpc.js"></script> 
+  <script src="node_modules/red-yarn/red-yarn.js"></script> 
+  <script src="client.js"></script> 
+  <script src="client-ui.js"></script> 
+  <style>
+    * { margin: 0; padding: 0}
+  </style>
+  </head>
+  <body>
+  </body>
+  <script>
+    Client = getModule("client")
+    Client.create()
+  </script>
+</html>
