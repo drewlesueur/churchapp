@@ -16,18 +16,17 @@ setModule "server", ->
     , (error, response, body) ->
       cb error
 
-  getStakeUnits = (cb) ->
-    request "https://lds.org/directory/services/ludrs/unit/current-user-stake-wards", (error, response, body) ->
-      cb error, JSON.parse body
+  getCurrentUserUnit = (cb) ->
+    url = "https://www.lds.org/directory/services/ludrs/mem/current-user-unitNo"
+    request url, (err, resp, body) ->
+      console.log "user unit"
+      unit = JSON.parse(body).message
+      cb err, unit
 
-
-  findTwinKnollsWard = (wards) ->
-    twinKnolls = _.find wards, (ward) ->
-      ward.wardName == "Twin Knolls Ward"
-    twinKnolls.wardUnitNo
-
+    
   getWardMembers = (ward, cb) ->
     wardUrl = "https://lds.org/directory/services/ludrs/mem/member-detaillist/%@" 
+    wardUrl = "https://www.lds.org/directory/services/ludrs/mem/member-detaillist-with-callings/%@"
     wardUrl = wardUrl.replace "%@", ward
     request wardUrl, (error, response, body) ->
       cb error, JSON.parse body
@@ -38,19 +37,20 @@ setModule "server", ->
       client.call "setWards", wards, () ->
         console.log "set ward"
 
-      client.call "setTwinKnowllsMembers", members, () ->
+      client.call "setMembers", members, () ->
 
     server.getServerTime = (cb) ->
       cb null, Date.now()
 
+    server.api = (url, cb) ->
+      request url, (err, response, body) ->
+        cb err, body
+
     wards = []
     members = []
-    async.series [login, getStakeUnits], (err, responses) ->
-      wards = responses[1]
-      console.log "wards are"
-      console.log wards
-      twinKnollsId = findTwinKnollsWard wards
-      getWardMembers twinKnollsId, (err, _members) ->
+    async.series [login, getCurrentUserUnit], (err, responses) ->
+      unit = responses[1]
+      getWardMembers unit, (err, _members) ->
         members = _members
 
     server
